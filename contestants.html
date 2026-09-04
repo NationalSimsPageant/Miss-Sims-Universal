@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road to Tokyo - Contestants Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Prompt:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #12161d; margin: 0; font-family: 'Montserrat', 'Prompt', sans-serif; color: white; }
+        .nav-menu { text-align: center; padding: 20px; background: #1a1f29; }
+        .nav-menu a { color: #d4af37; text-decoration: none; margin: 0 15px; font-weight: 700; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+        
+        .container { max-width: 1100px; margin: auto; padding: 30px 20px; }
+        
+        h1 { color: #d4af37; text-align: center; letter-spacing: 2px; font-weight: 700; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #b0bec5; font-size: 13px; margin-bottom: 40px; }
+
+        /* ส่วนแสดงรูปภาพผู้เข้าประกวด */
+        .contestants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding-bottom: 50px;
+        }
+        .contestant-card {
+            background: #1a1f29;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            padding: 15px;
+            transition: 0.3s;
+            position: relative;
+        }
+        .contestant-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+        .contestant-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #12161d;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .contestant-img:hover {
+            opacity: 0.85;
+        }
+        .contestant-country {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .contestant-name {
+            font-size: 11px;
+            font-weight: 400;
+            color: #d4af37;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        /* ปุ่มกดโหวตใต้รูป */
+        .vote-card-btn {
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            border: 1px solid #d4af37;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            font-family: 'Montserrat';
+        }
+        .vote-card-btn:hover {
+            background: #d4af37;
+            color: #12161d;
+        }
+        .vote-card-btn:disabled {
+            border-color: #555;
+            color: #777;
+            background: transparent;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- เมนูด้านบนครบ 3 หน้า -->
+    <div class="nav-menu">
+        <a href="index.html">HOME</a>
+        <a href="contestants.html">CONTESTANTS</a>
+        <a href="titleholder.html">TITLEHOLDER</a>
+    </div>
+
+    <div class="container">
+        <h1>CONTESTANTS GALLERY</h1>
+        <div class="subtitle">Vote to secure your favorites an automatic spot in the Top 14</div>
+        <div class="contestants-grid" id="contestants-grid"></div>
+    </div>
+
+    <!-- เรียกใช้งาน Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAK_FP7yIMwsa19OE137Vb3EQpmlmGw-dw",
+            authDomain: "vote-msuniversal25.firebaseapp.com",
+            projectId: "vote-msuniversal25",
+            storageBucket: "vote-msuniversal25.firebasestorage.app",
+            messagingSenderId: "468870680104",
+            appId: "1:468870680104:web:e57f73e0339baee97f2f1d",
+            databaseURL: "https://msuniversal26-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+
+        // รายชื่อประเทศ (นำ Türkiye ออกเรียบร้อย)
+        const countryKeys = {
+            "Albania": "1", "Angola": "1", "Argentina": "1", "Aruba": "1", "Australia": "1",
+            "Bahamas": "1", "Belgium": "1", "Brazil": "1", "Canada": "1", "Chile": "1",
+            "China": "1", "Colombia": "1", "Costa Rica": "1", "Croatia": "1", "Curaçao": "1",
+            "Denmark": "1", "Dominican Republic": "1", "Ecuador": "1", "El Salvador": "1", "Finland": "1",
+            "France": "1", "Germany": "1", "Ghana": "1", "Great Britain": "1", "Guatemala": "1",
+            "Iceland": "1", "India": "1", "Indonesia": "1", "Italy": "1", "Jamaica": "1",
+            "Japan": "1", "Kenya": "1", "Korea": "1", "Laos": "1", "Malaysia": "1",
+            "Mexico": "1", "Mongolia": "1", "Myanmar": "1", "Namibia": "1", "Nepal": "1",
+            "Netherlands": "1", "New Zealand": "1", "Nicaragua": "1", "Nigeria": "1", "Norway": "1",
+            "Panama": "1", "Paraguay": "1", "Peru": "1", "Philippines": "1", "Poland": "1",
+            "Portugal": "1", "Puerto Rico": "1", "Singapore": "1", "South Africa": "1",
+            "Spain": "1", "Thailand": "1", "Ukraine": "1", "USA": "1",
+            "Venezuela": "1", "Vietnam": "1"
+        };
+
+        // รายชื่อผู้เข้าประกวดและชื่อไฟล์รูปภาพ
+        const registeredContestants = {
+            "Albania": { name: "LINDITA KRASNIQI", file: "Albania" },
+            "Angola": { name: "NAYARA DOS SANTOS", file: "Angola" },
+            "Argentina": { name: "DELFINA PALACIOS", file: "Argentina" },
+            "Aruba": { name: "ANOUK TROMP", file: "Aruba" },
+            "Australia": { name: "AMELIA DESIREE REINFREE", file: "Australia" },
+            "Bahamas": { name: "SHANIQUA ROLLE", file: "Bahamas" },
+            "Belgium": { name: "AVA MENDES", file: "Belgium" },
+            "Brazil": { name: "GABRIELA DA SILVA SANTOS", file: "Brazil" },
+            "Canada": { name: "DIANA OLSEN", file: "Canada" },
+            "Chile": { name: "EMILIA DIDES", file: "Chile" },
+            "China": { name: "LÍN YUÈYÍ", file: "China" },
+            "Colombia": { name: "GABRIELA MONTOYA", file: "Colombia" },
+            "Costa Rica": { name: "PAULINA SOLANO", file: "Costa Rica" },
+            "Croatia": { name: "LUCIA IVANAVESIC", file: "Croatia" },
+            "Curaçao": { name: "SHANTY MARTINA", file: "Curaçao" },
+            "Denmark": { name: "VIVIENNE BRIAR LOUVRE", file: "Denmark" },
+            "Dominican Republic": { name: "FATIMA BELTRÁN", file: "Dominican Rep" },
+            "Ecuador": { name: "SUSANA INVERSEN", file: "Ecuador" },
+            "El Salvador": { name: "ANDREA VILLALOBOS", file: "El Salvador" },
+            "Finland": { name: "KESIA HALLA", file: "Finland" },
+            "France": { name: "LIONESS FONTAINE", file: "France" },
+            "Germany": { name: "GRETA JEAN ROSENBERG", file: "Germany" },
+            "Ghana": { name: "ABENA MENSAH", file: "Ghana" },
+            "Great Britain": { name: "PENELOPE DAVENPORT", file: "Great Britain" },
+            "Guatemala": { name: "AMARANTA XILOJ", file: "Guatemala" },
+            "Iceland": { name: "SAGA KNÚTSDÓTTIR", file: "Iceland" },
+            "India": { name: "SHIVANI CHATTERJEE", file: "India" },
+            "Indonesia": { name: "RATIH RAHADIAN", file: "Indonesia" },
+            "Italy": { name: "LIA MATARANI", file: "Italy" },
+            "Jamaica": { name: "NIA CLARKE", file: "Jamaica" },
+            "Japan": { name: "KOHARU MATSUI", file: "Japan" },
+            "Kenya": { name: "AMANI OTIENO", file: "Kenya" },
+            "Korea": { name: "SENA MOON", file: "Korea" },
+            "Laos": { name: "KAEWTA INPANYA", file: "Laos" },
+            "Malaysia": { name: "RATNA IDRIS", file: "Malaysia" },
+            "Mexico": { name: "LIDIA MACHADO", file: "Mexico" },
+            "Mongolia": { name: "SARAI ZELME", file: "Mongolia" },
+            "Myanmar": { name: "SU SU WIN", file: "Myanmar" },
+            "Namibia": { name: "GRACE NEL", file: "Namibia" },
+            "Nepal": { name: "SUNITA SHRESTHA", file: "Nepal" },
+            "Netherlands": { name: "ASHLEY RINEHART", file: "Netherlands" },
+            "New Zealand": { name: "FETUILAGI MANAIA", file: "New Zealand" },
+            "Nicaragua": { name: "MARIA JOSE GUTIERREZ", file: "Nicaragua" },
+            "Nigeria": { name: "JULIANA OKEREKE", file: "Nigeria" },
+            "Norway": { name: "EMMA ISAKSEN", file: "Norway" },
+            "Panama": { name: "MARISOL ALTAMIRANO", file: "Panama" },
+            "Paraguay": { name: "VIVIANAS MALISORN", file: "Para+guay" },
+            "Peru": { name: "CAMILA BENAVIDES", file: "Peru" },
+            "Philippines": { name: "MARIA LOURDES SANTOS", file: "Philippines" },
+            "Poland": { name: "KALINA SAWICKA", file: "Poland" },
+            "Portugal": { name: "LEONOR SANTOS", file: "Portugal" },
+            "Puerto Rico": { name: "LUCIANA MORARES", file: "Puerto Rico" },
+            "Singapore": { name: "CHLOE TAN WEI LING", file: "Singapore" },
+            "South Africa": { name: "SUDAH JACOBS", file: "South Af" },
+            "Spain": { name: "ALBA VALCÁRCEL", file: "Spain" },
+            "Thailand": { name: "CHALITA KAEWSRI", file: "Thailand" },
+            "Ukraine": { name: "SOLOMIA ZORYANSKA", file: "Ukraine" },
+            "USA": { name: "SAVANNAH MILES", file: "United states" },
+            "Venezuela": { name: "GABRIELA SANTIAGO", file: "Venezuela" },
+            "Vietnam": { name: "LÊ PHƯƠNG LINH", file: "Vietnam" }
+        };
+
+        // ฟังก์ชันสั่งบันทึกคะแนนโหวตลง Firebase พร้อมแจ้งเตือน
+        function voteForCountry(countryName) {
+            db.ref('26Votes/' + countryName.replace(/ /g, "_")).transaction(c => (c || 0) + 1).then(() => {
+                alert(`VOTE SUCCESS! +1 vote for ${countryName.toUpperCase()}!`);
+            });
+        }
+
+        // แสดงผลแกลเลอรี
+        const grid = document.getElementById('contestants-grid');
+        Object.keys(countryKeys).sort().forEach(country => {
+            const card = document.createElement('div');
+            card.className = 'contestant-card';
+            
+            let imgPath = "";
+            let nameHtml = "";
+            let isRegistered = registeredContestants[country] !== undefined;
+
+            if (isRegistered) {
+                const data = registeredContestants[country];
+                imgPath = `Picture/PIC ${data.file}.png`;
+                nameHtml = `<div class="contestant-name">${data.name}</div>`;
+            } else {
+                imgPath = `Picture/PIC blank.png`;
+                nameHtml = `<div class="contestant-name" style="color:#777;">(Not yet registered)</div>`;
+            }
+
+            card.innerHTML = `
+                <img src="${imgPath}" class="contestant-img" alt="${country}" title="Click to Vote for ${country}" onerror="this.src='https://via.placeholder.com/180x220?text=No+Image'">
+                <div class="contestant-country">${country.toUpperCase()}</div>
+                ${nameHtml}
+                <button class="vote-card-btn" ${!isRegistered ? 'disabled' : ''} onclick="voteForCountry('${country}')">
+                    ${isRegistered ? 'VOTE' : 'UNAVAILABLE'}
+                </button>
+            `;
+
+            // ถ้ามีรูปและลงทะเบียนแล้ว ให้คลิกที่รูปเพื่อโหวตได้ด้วย
+            if (isRegistered) {
+                const imgElement = card.querySelector('.contestant-img');
+                imgElement.onclick = () => voteForCountry(country);
+            }
+
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>

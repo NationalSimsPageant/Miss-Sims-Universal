@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road to Tokyo - Titleholder & Hall of Fame</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Prompt:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #12161d; margin: 0; font-family: 'Montserrat', 'Prompt', sans-serif; color: white; }
+        .nav-menu { text-align: center; padding: 20px; background: #1a1f29; }
+        .nav-menu a { color: #d4af37; text-decoration: none; margin: 0 15px; font-weight: 700; letter-spacing: 1px; }
+        
+        .container { max-width: 900px; margin: auto; padding: 40px 20px; text-align: center; }
+        
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+            text-align: left;
+        }
+        .info-box h3 { color: #d4af37; font-size: 18px; margin-bottom: 10px; letter-spacing: 1px; }
+        .info-box p { color: #b0bec5; font-size: 13px; line-height: 1.6; margin: 0; }
+
+        .titleholder-box {
+            background: #1a1f29;
+            border: 1px solid #d4af37;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1, .hall-title {
+            color: #ffffff;
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .main-img {
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333;
+            margin-bottom: 25px;
+        }
+
+        .titleholder-bio {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #cfd8dc;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        /* สไตล์สำหรับรูปภาพ Hall of Fame รวมแต่ละปี */
+        .hall-section {
+            background: #1a1f29;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .hall-img {
+            width: 100%;
+            max-width: 750px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        @media (max-width: 768px) {
+            .info-section { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- เมนูด้านบน -->
+    <div class="nav-menu">
+        <a href="index.html">HOME</a>
+        <a href="contestants.html">CONTESTANTS</a>
+        <a href="titleholder.html">TITLEHOLDER</a>
+    </div>
+
+    <div class="container">
+        
+        <!-- ส่วน Since 2023 & Our Goal -->
+        <div class="info-section">
+            <div class="info-box">
+                <h3>Since 2023</h3>
+                <p>Welcome to Miss Sims Universal, where we celebrate the essence of beauty in its most unique and diverse forms. Under the leadership of President Harmony Lynch, our pageant aims to redefine beauty standards by embracing individuality, confidence, and grace.</p>
+            </div>
+            <div class="info-box">
+                <h3>Our Goal</h3>
+                <p>At Miss Sims Universal | Uniquely Beautiful, our goal is to celebrate and promote beauty in its diverse and unique expressions. We strive to redefine conventional beauty standards by embracing individuality, confidence, and inclusivity.</p>
+            </div>
+        </div>
+
+        <!-- ส่วน Reigning Miss Universal -->
+        <div class="titleholder-box">
+            <h1>THE REIGNING MISS UNIVERSAL</h1>
+            <img src="Titleholder/Reigning Miss Universal 2025.jpg" class="main-img" alt="Reigning Miss Universal">
+            <div class="titleholder-bio">
+                Becky Ann Aridi is a visionary artist and advocate hailing from the vibrant shores of Puerto Rico. Crowned Miss Sims Universal 2025 in London, Becky's journey is a testament to the power of staying true to oneself in a world of fleeting trends.
+            </div>
+        </div>
+
+        <!-- 2023 Hall of Fame -->
+        <div class="hall-section">
+            <div class="hall-title">2023 Hall of fame</div>
+            <img src="Titleholder/ตำแหน่ง 23.png" class="hall-img" alt="2023 Hall of Fame">
+        </div>
+
+        <!-- 2024 Hall of Fame -->
+        <div class="hall-section">
+            <div class="hall-title">2024 Hall of fame</div>
+            <img src="Titleholder/ตำแหน่ง 24.png" class="hall-img" alt="2024 Hall of Fame">
+        </div>
+
+        <!-- 2025 Hall of Fame -->
+        <div class="hall-section">
+            <div class="hall-title">2025 Hall of fame</div>
+            <img src="Titleholder/ตำแหน่ง 25.png" class="hall-img" alt="2025 Hall of Fame">
+        </div>
+
+    </div>
+
+</body>
+</html>

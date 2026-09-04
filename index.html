@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Universal - Vote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Prompt:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #12161d; margin: 0; font-family: 'Montserrat', 'Prompt', sans-serif; }
+        
+        .nav-menu { text-align: center; padding: 20px; background: #1a1f29; }
+        .nav-menu a { color: #d4af37; text-decoration: none; margin: 0 15px; font-weight: 700; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+
+        .sakura-tree { display: inline-flex; flex-direction: column; align-items: center; width: 85px; position: relative; z-index: 2; margin-bottom: 65px; flex-shrink: 0; }
+        .sakura-trunk { 
+            width: 18px; border-radius: 12px 12px 0 0; position: relative; 
+            transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.2);
+        }
+        .sakura-blossom-container { position: relative; width: 58px; height: 58px; margin-bottom: -12px; z-index: 3; }
+        .sakura-blossom { 
+            width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            border: 3px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); overflow: hidden; position: relative; background: #fff;
+        }
+        .sakura-blossom img { width: 100%; height: 100%; object-fit: cover; opacity: 0.65; }
+        .percent-overlay { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            color: white; font-size: 13px; font-weight: 800; text-shadow: 0px 0px 4px rgba(0,0,0,0.8); z-index: 4; 
+        }
+        .vote-label-top { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        .country-label { transform: rotate(-45deg); margin-top: 60px; font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap; width: 130px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+        
+        .vote-btn { width: 100%; padding: 14px; cursor: pointer; border: 1px solid #ffdeeb; background: #fff; border-radius: 15px; font-weight: 700; font-size: 12px; display: flex; align-items: center; color: #5d4a4a; transition: 0.3s; font-family: 'Montserrat'; }
+        .vote-btn:hover { border-color: #ffb7c5; background: #fffafb; transform: translateY(-2px); color: #ff8fa3; }
+        
+        .bonus-banner { background: linear-gradient(135deg, #1a1f29, #2c3445); border: 2px solid #d4af37; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .bonus-btn { background: #d4af37; color: #12161d; border: none; padding: 12px 25px; font-weight: 700; border-radius: 25px; cursor: pointer; font-size: 13px; letter-spacing: 1px; transition: 0.3s; font-family: 'Montserrat'; }
+        
+        #page-transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #12161d; display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        #page-transition-overlay.active { opacity: 1; pointer-events: auto; }
+        .flying-star { position: absolute; width: 60px; height: 60px; background: url('icon.png') no-repeat center/contain; animation: flyStar 0.7s ease-in-out forwards; }
+        @keyframes flyStar { 0% { transform: translateX(-120vw) rotate(0deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(120vw) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="page-transition-overlay"><div class="flying-star"></div></div>
+
+    <div class="nav-menu">
+        <a href="index.html">HOME</a>
+        <a href="contestants.html">CONTESTANTS</a>
+        <a href="titleholder.html">TITLEHOLDER</a>
+    </div>
+
+    <div id="voting-wrapper" style="max-width: 950px; margin: auto; padding: 25px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #ffffff; text-transform: uppercase; letter-spacing: 4px;">Road to Tokyo</h1>
+            <div style="width: 50px; height: 3px; background: #ffb7c5; margin: 10px auto;"></div>
+        </div>
+
+        <div class="bonus-banner">
+            <h3 style="color: #d4af37; margin: 0 0 10px 0;">✨ DAILY BONUS VOTE ✨</h3>
+            <p id="bonus-status-text" style="color: #b0bec5; font-size: 12px; margin: 0 0 15px 0;">Claim your random daily bonus vote (10 - 1,000 votes)!</p>
+            <button id="claim-bonus-btn" class="bonus-btn" onclick="claimDailyBonus()">CLAIM DAILY BONUS</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span id="total-v" style="font-weight: 700; background: #fff; color: #ff6b81; padding: 8px 25px; border-radius: 25px; border: 1px solid #ffdeeb; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">TOTAL: 0</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 25px; justify-content: center;">
+            <input type="text" id="country-search" placeholder="Search country..." style="flex: 1; max-width: 350px; padding: 14px 25px; border-radius: 30px; border: 1px solid #ffdeeb; outline: none; background: white; font-family: 'Montserrat';">
+        </div>
+
+        <div id="sakura-forest" style="overflow-x: auto; display: flex; align-items: flex-end; min-height: 500px; padding: 40px 10px; margin-bottom: 30px;">
+            <div id="tree-container" style="display: flex; align-items: flex-end; gap: 20px;"></div>
+        </div>
+
+        <div id="vote-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAK_FP7yIMwsa19OE137Vb3EQpmlmGw-dw",
+            authDomain: "vote-msuniversal25.firebaseapp.com",
+            projectId: "vote-msuniversal25",
+            storageBucket: "vote-msuniversal25.firebasestorage.app",
+            messagingSenderId: "468870680104",
+            appId: "1:468870680104:web:e57f73e0339baee97f2f1d",
+            databaseURL: "https://msuniversal26-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+
+        const countryColors = {
+            "Albania":"#ffb3ba","Angola":"#bae1ff","Argentina":"#ffdfba","Aruba":"#bae1ff","Australia":"#baffc9","Bahamas":"#ffffba","Belgium":"#ffffba","Brazil":"#baffc9","Canada":"#ffb3ba","Chile":"#ffb3ba","China":"#ffb3ba","Colombia":"#ffffba","Costa Rica":"#bae1ff","Croatia":"#ffb3ba","Curaçao":"#bae1ff","Denmark":"#ffb3ba","Dominican Republic":"#bae1ff","Ecuador":"#ffffba","El Salvador":"#bae1ff","Finland":"#bae1ff","France":"#bae1ff","Germany":"#ffffba","Ghana":"#ffffba","Great Britain":"#ffb3ba","Guatemala":"#bae1ff","Iceland":"#bae1ff","India":"#ffdfba","Indonesia":"#ffb3ba","Italy":"#baffc9","Jamaica":"#ffffba","Japan":"#ffb3ba","Kenya":"#baffc9","Korea":"#fff","Laos":"#ffb3ba","Malaysia":"#ffb3ba","Mexico":"#baffc9","Mongolia":"#ffffba","Myanmar":"#ffffba","Namibia":"#baffc9","Nepal":"#ffb3ba","Netherlands":"#ffdfba","New Zealand":"#bae1ff","Nicaragua":"#bae1ff","Nigeria":"#baffc9","Norway":"#ffb3ba","Panama":"#ffb3ba","Paraguay":"#ffb3ba","Peru":"#ffb3ba","Philippines":"#bae1ff","Poland":"#ffb3ba","Portugal":"#baffc9","Puerto Rico":"#ffb3ba","Singapore":"#ffffba","South Africa":"#baffc9","Spain":"#bae1ff","Thailand":"#bae1ff","Ukraine":"#ffb3ba","USA":"#bae1ff","Venezuela":"#ffffba","Vietnam":"#ffb3ba"
+        };
+
+        const countries = ["Albania", "Angola", "Argentina", "Aruba", "Australia", "Bahamas", "Belgium", "Brazil", "Canada", "Chile", "China", "Colombia", "Costa Rica", "Croatia", "Curaçao", "Denmark", "Dominican Republic", "Ecuador", "El Salvador", "Finland", "France", "Germany", "Ghana", "Great Britain", "Guatemala", "Iceland", "India", "Indonesia", "Italy", "Jamaica", "Japan", "Kenya", "Korea", "Laos", "Malaysia", "Mexico", "Mongolia", "Myanmar", "Namibia", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Nigeria", "Norway", "Panama", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Puerto Rico", "Singapore", "South Africa", "Spain", "Thailand", "Ukraine", "USA", "Venezuela", "Vietnam"];
+        
+        const countryCodes = {"Albania":"al","Angola":"ao","Argentina":"ar","Aruba":"aw","Australia":"au","Bahamas":"bs","Belgium":"be","Brazil":"br","Canada":"ca","Chile":"cl","China":"cn","Colombia":"co","Costa Rica":"cr","Croatia":"hr","Curaçao":"cw","Denmark":"dk","Dominican Republic":"do","Ecuador":"ec","El Salvador":"sv","Finland":"fi","France":"fr","Germany":"de","Ghana":"gh","Great Britain":"gb","Guatemala":"gt","Iceland":"is","India":"in","Indonesia":"id","Italy":"it","Jamaica":"jm","Japan":"jp","Kenya":"ke","Korea":"kr","Laos":"la","Malaysia":"my","Mexico":"mx","Mongolia":"mn","Myanmar":"mm","Namibia":"na","Nepal":"np","Netherlands":"nl","New Zealand":"nz","Nicaragua":"ni","Nigeria":"ng","Norway":"no","Panama":"pa","Paraguay":"py","Peru":"pe","Philippines":"ph","Poland":"pl","Portugal":"pt","Puerto Rico":"pr","Singapore":"sg","South Africa":"za","Spain":"es","Thailand":"th","Ukraine":"ua","USA":"us","Venezuela":"ve","Vietnam":"vn"};
+
+        function checkDailyBonus() {
+            const lastClaim = localStorage.getItem('last_bonus_date');
+            const today = new Date().toDateString();
+            const btn = document.getElementById('claim-bonus-btn');
+            const text = document.getElementById('bonus-status-text');
+
+            if (lastClaim === today) {
+                btn.disabled = true;
+                btn.innerText = "ALREADY CLAIMED TODAY";
+                text.innerText = "Come back tomorrow for another random bonus vote!";
+            }
+        }
+
+        function claimDailyBonus() {
+            const lastClaim = localStorage.getItem('last_bonus_date');
+            const today = new Date().toDateString();
+
+            if (lastClaim === today) {
+                alert("You have already claimed your daily bonus today!");
+                return;
+            }
+
+            const countryName = prompt("Enter the country name you want to give your Daily Bonus to:\n(e.g., Thailand, USA, Philippines)");
+            if (!countryName) return;
+
+            const matchedCountry = countries.find(c => c.toLowerCase() === countryName.trim().toLowerCase());
+            if (!matchedCountry) {
+                alert("Country not found! Please check the spelling.");
+                return;
+            }
+
+            const bonusValues = [10, 20, 50, 100, 500, 1000];
+            const randomBonus = bonusValues[Math.floor(Math.random() * bonusValues.length)];
+
+            db.ref('26Votes/' + matchedCountry.replace(/ /g, "_")).transaction(c => (c || 0) + randomBonus).then(() => {
+                localStorage.setItem('last_bonus_date', today);
+                alert(`SUCCESS! You got a Daily Bonus of +${randomBonus} votes for ${matchedCountry.toUpperCase()}!`);
+                checkDailyBonus();
+                document.getElementById('sakura-forest').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        db.ref('26Votes').on('value', snap => {
+            const votes = snap.val() || {};
+            const total = Object.values(votes).reduce((a, b) => a + b, 0);
+            document.getElementById('total-v').innerText = "TOTAL: " + total.toLocaleString();
+
+            const sorted = [...countries].sort((a, b) => (votes[b.replace(/ /g, "_")] || 0) - (votes[a.replace(/ /g, "_")] || 0));
+            const maxVote = votes[sorted[0].replace(/ /g, "_")] || 1;
+
+            let forestHtml = "";
+            sorted.forEach((name) => {
+                const count = votes[name.replace(/ /g, "_")] || 0;
+                const code = countryCodes[name] || "un";
+                const h = (count / maxVote) * 280 + 15; 
+                const pc = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                const pColor = countryColors[name] || "#ffb7c5"; 
+
+                forestHtml += `
+                    <div class="sakura-tree">
+                        <div class="sakura-blossom-container">
+                            <div class="sakura-blossom">
+                                <img src="https://flagcdn.com/w80/${code}.png">
+                                <span class="percent-overlay">${pc}%</span>
+                            </div>
+                        </div>
+                        <div class="sakura-trunk" style="height: ${h}px; background: linear-gradient(to top, rgba(255,255,255,0.1), ${pColor}b3);">
+                            <div class="vote-label-top">${count.toLocaleString()}</div>
+                        </div>
+                        <div class="country-label">${name.toUpperCase()}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('tree-container').innerHTML = forestHtml;
+            renderButtons(document.getElementById('country-search').value);
+        });
+
+        function renderButtons(filter = "") {
+            const grid = document.getElementById('vote-grid');
+            grid.innerHTML = "";
+            countries.forEach(name => {
+                if (name.toLowerCase().includes(filter.toLowerCase())) {
+                    const b = document.createElement('button');
+                    b.className = "vote-btn";
+                    const code = countryCodes[name] || "un";
+                    b.innerHTML = `
+                        <img src="https://flagcdn.com/w40/${code}.png" style="width:24px; margin-right:12px; border-radius:3px;"> 
+                        <span>${name.toUpperCase()}</span>
+                    `;
+                    b.onclick = () => { 
+                        db.ref('26Votes/' + name.replace(/ /g, "_")).transaction(c => (c || 0) + 1).then(() => {
+                            document.getElementById('sakura-forest').scrollIntoView({ behavior: 'smooth' });
+                        });
+                    };
+                    grid.appendChild(b);
+                }
+            });
+        }
+
+        document.getElementById('country-search').addEventListener('input', (e) => renderButtons(e.target.value));
+
+        checkDailyBonus();
+    </script>
+</body>
+</html>
