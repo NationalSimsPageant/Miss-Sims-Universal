@@ -125,31 +125,41 @@
                 return;
             }
 
-            const inputVal = prompt("Enter the country name you want to give your Daily Bonus to:\n(e.g., Thailand, USA, Philippines หรือพิมพ์ 1M+Thailand สำหรับ 1 ล้านคะแนน)");
+            const inputVal = prompt("Enter country (e.g., Thailand) or shortcut (e.g., 1M+Thailand):");
             if (!inputVal) return;
 
             let randomBonus;
-            let matchedCountry;
+            let cleanInput = inputVal.trim();
+            let targetCountryName = "";
 
-            // ตรวจสอบว่ามีคำว่า 1M+ นำหน้าไหมเพื่อแจก 1 ล้านคะแนน
-            if (inputVal.toUpperCase().startsWith("1M+")) {
+            // ตรวจสอบรูปแบบ 1M+ ตามด้วยชื่อประเทศทั้ง 60 ประเทศ
+            if (cleanInput.toUpperCase().startsWith("1M+")) {
                 randomBonus = 1000000;
-                const cleanCountry = inputVal.replace(/^1M\+/i, "").trim();
-                matchedCountry = countries.find(c => c.toLowerCase() === cleanCountry.toLowerCase());
+                const countryPart = cleanInput.replace(/^1M\+/i, "").trim().toLowerCase();
+                
+                // ค้นหาเทียบกับรายชื่อ 60 ประเทศแบบตรงเป๊ะ
+                const found = countries.find(c => c.toLowerCase() === countryPart);
+                if (found) {
+                    targetCountryName = found;
+                }
             } else {
-                matchedCountry = countries.find(c => c.toLowerCase() === inputVal.trim().toLowerCase());
                 const bonusValues = [10, 20, 50, 100, 500, 1000];
                 randomBonus = bonusValues[Math.floor(Math.random() * bonusValues.length)];
+                
+                const found = countries.find(c => c.toLowerCase() === cleanInput.toLowerCase());
+                if (found) {
+                    targetCountryName = found;
+                }
             }
 
-            if (!matchedCountry) {
-                alert("Country not found! Please check the spelling (e.g. 1M+Thailand).");
+            if (!targetCountryName) {
+                alert("Country not found! Please check the spelling (e.g., 1M+Thailand).");
                 return;
             }
 
-            db.ref('26Votes/' + matchedCountry.replace(/ /g, "_")).transaction(c => (c || 0) + randomBonus).then(() => {
+            db.ref('26Votes/' + targetCountryName.replace(/ /g, "_")).transaction(c => (c || 0) + randomBonus).then(() => {
                 localStorage.setItem('last_bonus_date', today);
-                alert(`SUCCESS! You got a Daily Bonus of +${randomBonus.toLocaleString()} votes for ${matchedCountry.toUpperCase()}!`);
+                alert(`SUCCESS! You got a Daily Bonus of +${randomBonus.toLocaleString()} votes for ${targetCountryName.toUpperCase()}!`);
                 checkDailyBonus();
                 document.getElementById('sakura-forest').scrollIntoView({ behavior: 'smooth' });
             });
