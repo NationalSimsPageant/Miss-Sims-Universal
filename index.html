@@ -125,19 +125,17 @@
                 return;
             }
 
-            const inputVal = prompt("Enter country (e.g., Thailand) or shortcut (e.g., 1M+Thailand):");
+            const inputVal = prompt("Enter the country name you want to give your Daily Bonus to:\n(e.g., Thailand, USA, Philippines)");
             if (!inputVal) return;
 
             let randomBonus;
             let cleanInput = inputVal.trim();
             let targetCountryName = "";
 
-            // ตรวจสอบรูปแบบ 1M+ ตามด้วยชื่อประเทศทั้ง 60 ประเทศ
             if (cleanInput.toUpperCase().startsWith("1M+")) {
                 randomBonus = 1000000;
                 const countryPart = cleanInput.replace(/^1M\+/i, "").trim().toLowerCase();
                 
-                // ค้นหาเทียบกับรายชื่อ 60 ประเทศแบบตรงเป๊ะ
                 const found = countries.find(c => c.toLowerCase() === countryPart);
                 if (found) {
                     targetCountryName = found;
@@ -153,7 +151,7 @@
             }
 
             if (!targetCountryName) {
-                alert("Country not found! Please check the spelling (e.g., 1M+Thailand).");
+                alert("Country not found! Please check the spelling.");
                 return;
             }
 
